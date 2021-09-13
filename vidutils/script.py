@@ -60,8 +60,11 @@ class ArgumentParser(argparse.ArgumentParser):
         # Use single variable to distinguish between source types.
         if arguments.video_file is not None:
             arguments.source = Source.FILE
+            arguments.input = arguments.video_file
         elif arguments.camera_index is not None:
             arguments.source = Source.CAMERA
+            arguments.input = arguments.camera_index
         elif arguments.stream_url is not None:
             arguments.source = Source.STREAM
+            arguments.input = arguments.stream_url
         return arguments
