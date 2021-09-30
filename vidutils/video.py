@@ -293,7 +293,7 @@ class Player:
                 # Visualization
                 if self.display or self.out is not None:
                     # Algorithm annotations
-                    if self.proc is not None:
+                    if res:
                         frame = self.proc.plot(frame)
                     # Player annotations
                     cv.putText(
