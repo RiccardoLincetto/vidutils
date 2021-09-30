@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import Mock
 
 from vidutils import video
 
@@ -22,3 +23,22 @@ class TestSource(unittest.TestCase):
         self.assertIsNot(source, video.Source.FILE)
         self.assertIsNot(source, video.Source.CAMERA)
         self.assertIs(source, video.Source.STREAM)
+
+
+class TestPlayer(unittest.TestCase):
+    
+    @classmethod
+    def setUpClass(cls) -> None:
+        cap = Mock()
+        algo = Mock()
+        out = Mock()
+        cls.player = video.Player(cap, algo, out)
+
+    def test_pause(self):
+        self.assertEqual(self.player.is_paused, False)
+        self.player.is_paused = True
+        self.assertEqual(self.player.is_paused, True)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.close()
