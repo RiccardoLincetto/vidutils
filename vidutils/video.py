@@ -1,5 +1,6 @@
 # Video application
 # This module contains the main tools for video captures and playback.
+# NOTE vidsz has an interesting alternative for video captures and writers.
 
 import logging
 import sys
@@ -108,7 +109,7 @@ class Capture(cv.VideoCapture):
     def fps(self, value: Union[int, float]) -> None:
         """ ## Frames per second
         Set input frames per second. Available only for attached cameras.
-        
+
         NOTE this might influence physically the camera, so it needs to be a supported configuration,
         considering also the frame size.
 
@@ -180,7 +181,7 @@ class Capture(cv.VideoCapture):
     def read(self, frame_index: int = None) -> Union[np.ndarray, None]:
         """ ## Read frame
         Read <frame_index>-th frame.
-        
+
         :param frame_index: index of the frame to be read.
         """
         if frame_index is not None:
@@ -294,7 +295,17 @@ class Player:
                     # Algorithm annotations
                     if self.proc is not None:
                         frame = self.proc.plot(frame)
-                    # Player annotations TODO
+                    # Player annotations
+                    cv.putText(
+                        frame,
+                        f"Processing FPS: {int(1 / time_proc)}",
+                        (10, 20),
+                        cv.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (255, 255, 255),
+                        1,
+                        lineType=cv.LINE_AA
+                    )
 
                     # Display
                     cv.namedWindow("player", cv.WINDOW_NORMAL)
@@ -311,7 +322,7 @@ class Player:
             # wait for the amount of time necessary to match frame processing frequency to input FPS.
             if not self.no_wait:
                 # Time elapsed in seconds:
-                # (stop_cycle - start_cycle) / cv.getTickFrequency()
+                # (cv.getTickCount() - start_cycle) / cv.getTickFrequency()
                 try:
                     sleep(1 / self.cap.fps - (cv.getTickCount() -
                           start_cycle) / cv.getTickFrequency())
