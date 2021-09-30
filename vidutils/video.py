@@ -13,7 +13,7 @@ from typing import Any, Tuple, Union
 import cv2 as cv
 import numpy as np
 
-from .procs import Algorithm
+from .procs import IAlgorithm
 
 
 @unique
@@ -216,7 +216,7 @@ class Player:
 
     def __init__(self,
                  capture: Capture,
-                 algorithm: Algorithm = None,
+                 algorithm: IAlgorithm = None,
                  writer: cv.VideoWriter = None,
                  display: bool = False,
                  log: bool = True,
