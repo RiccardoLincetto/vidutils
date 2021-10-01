@@ -1,7 +1,5 @@
 #!./venv/bin/python
 
-from typing import Any
-
 import cv2 as cv
 import numpy as np
 
@@ -59,8 +57,7 @@ def annotate(frame, result=None):
 algorithm = procs.AlgorithmFromFuncs(run_func=cv.Canny, run_args=[100, 50], plot_func=annotate)
 
 # Create Player.
-capture = video.Capture(args.source, args.input)
-player = video.Player(capture, algorithm=algorithm, display=args.display)
+player = video.Player(video.Reader(args.input), algorithm=algorithm, display=args.display)
 
 # Loop.
 player.loop()

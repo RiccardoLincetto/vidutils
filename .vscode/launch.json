@@ -12,7 +12,7 @@
             "program": "example.py",
             "console": "integratedTerminal",
             "args": [
-                "--video-file=tests/sample.mp4",
+                "--input=tests/sample.mp4",
                 "--display"
             ]
         },
@@ -24,7 +24,7 @@
             "program": "example.py",
             "console": "integratedTerminal",
             "args": [
-                "--camera-index=0",
+                "--input=0",
                 "--display"
             ]
         }

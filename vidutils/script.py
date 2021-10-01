@@ -2,10 +2,8 @@
 # This module contains utility classes and functions, useful for scripting.
 
 import argparse
-
-# TODO check if better relative or absolute import.
-# from vidutils.video import Source
-from .video import Source
+import enum
+import logging
 
 
 class ArgumentParser(argparse.ArgumentParser):
@@ -23,13 +21,8 @@ class ArgumentParser(argparse.ArgumentParser):
         self.input = self.add_argument_group(
             'input arguments',
             'mutually exclusive group, used to select the type and specify the video source.')
-        self.input = self.input.add_mutually_exclusive_group(required=True)
-        self.input.add_argument('-v', '--video-file', type=str,
-                                help='video filename')
-        self.input.add_argument('-i', '--camera-index', type=int,
-                                help='camera index')
-        self.input.add_argument('-u', '--stream-url', type=str,
-                                help='network stream url')
+        self.input.add_argument('-i', '--input', type=str,
+                                help='video path or camera index (opencv convention)')
         # Output
         self.output = self.add_argument_group(
             'output arguments',
@@ -57,14 +50,24 @@ class ArgumentParser(argparse.ArgumentParser):
     def parse_args(self, *args, **kwargs):
         """Parse arguments and fix input."""
         arguments = super(ArgumentParser, self).parse_args(*args, **kwargs)
-        # Use single variable to distinguish between source types.
-        if arguments.video_file is not None:
-            arguments.source = Source.FILE
-            arguments.input = arguments.video_file
-        elif arguments.camera_index is not None:
-            arguments.source = Source.CAMERA
-            arguments.input = arguments.camera_index
-        elif arguments.stream_url is not None:
-            arguments.source = Source.STREAM
-            arguments.input = arguments.stream_url
+        # Use single variable to distinguish between source types
+        try:
+            arguments.input = int(arguments.input)
+            logging.debug("parsed input as integer")
+        except ValueError:
+            logging.debug("parsed input as str")
         return arguments
+
+
+@enum.unique
+class Key(enum.Enum):
+    """ # Keyboard inputs
+    List of keyboard inputs accepted by the player. Keys that are not inserted here will
+    trigger a logging.ERROR, because the process won't be able to parse the raw value into
+    a Key, and thus into a command.
+    """
+    NOINPUT = -1
+    ESC = 27
+    SPACEBAR = 32
+    Q = ord('q')
+    S = ord('s')

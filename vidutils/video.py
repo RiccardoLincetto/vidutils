@@ -1,223 +1,51 @@
 # Video application
 # This module contains the main tools for video captures and playback.
-# NOTE vidsz has an interesting alternative for video captures and writers.
 
 import logging
 import sys
-from datetime import datetime
-from enum import Enum, auto, unique
 from pathlib import Path
 from time import sleep
-from typing import Any, Tuple, Union
 
 import cv2 as cv
-import numpy as np
+import vidsz.opencv as vidsz
+from vidsz.interfaces import _IReader, _IWriter
 
 from .procs import IAlgorithm
+from .script import Key
 
 
-@unique
-class Source(Enum):
-    """ # Video source
-    Enumerates the types of input allowed by Capture.
-    """
-    FILE = auto()
-    CAMERA = auto()
-    STREAM = auto()
-
-
-class Capture(cv.VideoCapture):
-    """ # Extended capabilities for OpenCV VideoCapture
-    This class extends cv.VideoCapture with some methods which are more comfortably called within python.
-    The Player class relies on these methods.
+class Reader(vidsz.Reader):
+    """ # Video Reader
+    This class is a wrapper to vidsz.opencv.Reader class.
     """
 
-    def __init__(self, source: Source, *args, **kwargs) -> None:
-        """ ## Video capture
-        Read input from files, cameras or network streams.
-        The opened video is checked for validity and its properties are inferred from reading the first frame.
-
-        :param source: indicates the type of video source, passed as Source enumeration;
-        :param *args: arguments passed to cv.VideoCapture constructor.
-            NOTE there needs to be the video source here.
-        :param **kwargs: keyword arguments passed to cv.VideoCapture constructor.
-        """
-        super(Capture, self).__init__(*args, **kwargs)
-        assert self.isOpened(), print(f"Failed to open from source: {source}")
-        self.source = source
-
-        # Video filename, used as base to save video frames as images
-        self.filename = Path(args[0]).stem if self.source is Source.FILE else None
-
-        # Frame shape, inferred from first frame.
-        # Note: there is no cv.VideoCapture property for the number of channels.
-        frame = self.read()
-        self._default_shape = frame.shape
-        self._desired_shape = frame.shape
-        # Current number of channels, user controllable.
-        # self.channels = self._default_shape[-1]
-
-    # Temporal dimension
-
-    def __len__(self) -> int:
-        """ ## Video length
-        Length of the video input, from CV_CAP_PROP_FRAME_COUNT.
-        """
-        return int(self.get(cv.CAP_PROP_FRAME_COUNT)) if self.source is Source.FILE else 0
-
-    @property
-    def cursor(self) -> int:
-        """ ## Frame counter
-        Get cursor position. The cursor increases only for files, as the total number of frames is known in advance.
-        In the case of streams, it returns always -1, so that when compared to length 0 of streams the condition of
-        having a frame next `has_next()` is always true.
-        """
-        return int(self.get(cv.CAP_PROP_POS_FRAMES)) if self.source is Source.FILE else -1
-
-    @cursor.setter
-    def cursor(self, index: int) -> None:
-        """ ## Frame counter
-        Set cursor position. This is allowed only for video files, to jump between non adjacent frames.
-
-        :param index: frame index to be read next.
-        """
-        if self.source is Source.FILE:
-            if 0 <= index < len(self):
-                self.set(cv.CAP_PROP_POS_FRAMES, index)
-            else:
-                raise IndexError
-        else:  # Source.CAMERA or Source.STREAM
-            logging.error(f"cannot set cursor for {self.source.value}.")
-
-    @property
-    def has_next(self) -> bool:
-        """ ## End of file check
-        Indicates whether the video has incoming frames to be read/processed.
-        Note that for streams, this function relies on the fact that the cursor is always -1
-        and the length is always 0, so that the condition is always true.
-        """
-        return self.cursor < len(self)
-
-    @property
-    def fps(self) -> float:
-        """ ## Frames per second
-        Get input FPS from video capture properties.
-        """
-        return self.get(cv.CAP_PROP_FPS)
-
-    @fps.setter
-    def fps(self, value: Union[int, float]) -> None:
-        """ ## Frames per second
-        Set input frames per second. Available only for attached cameras.
-
-        NOTE this might influence physically the camera, so it needs to be a supported configuration,
-        considering also the frame size.
-
-        :param value: desired frame rate.
-        """
-        if self.source is Source.CAMERA:
-            self.set(cv.CAP_PROP_FPS, value)
-        else:  # Source.FILE or Source.STREAM
-            logging.error(f"cannot set fps for {self.source.value}.")
-
-    # Spatial dimension
-
-    @property
-    def shape(self) -> Tuple[int, int, int]:
-        """ ## Frame shape
-        Get frame shape, as [height, width, channels].
-
-        NOTE channels currently read-only.
-        """
-        return int(self.get(cv.CAP_PROP_FRAME_HEIGHT)), \
-               int(self.get(cv.CAP_PROP_FRAME_WIDTH)), \
-               self._default_shape[2]
-
-    @shape.setter
-    def shape(self, new_shape: Tuple[int, int, int]) -> None:
-        """ ## Frame shape
-        Set desired frame shape.
-
-        NOTE channels currently read-only, except for video cameras.
-
-        :param new_shape: [height, witdh, channels].
-        """
-        if self.source in (Source.FILE, Source.STREAM):
-            # Store values and smooth+resize every new frame.
-            # When channel is set, it influences the way frames are read.
-            raise NotImplementedError
-        elif self.source is Source.CAMERA:
-            # Set camera mode to work with desired resolution.
-            try:
-                self.set(cv.CAP_PROP_FRAME_HEIGHT, new_shape[0])
-                self.set(cv.CAP_PROP_FRAME_WIDTH, new_shape[1])
-            except Any as e:
-                print(f"{e}\nPossibly unsupported frame size.")
-                # TODO Store values and smooth+resize every new frame.
-        # Color channels are a physical parameter, not electronically controllable.
-        # The only supported options are 1 (mono) or 3 (rgb).
-        if new_shape[2] in (1, 3):
-            pass
-            # self.channels = new_shape[2]
-        else:
-            raise NotImplementedError
-
-    @property
-    def is_rgb(self) -> bool:
-        """ ## Color camera check
-        Whether the capturing sensor supports color images.
-        """
-        return self._default_shape[2] == 3
-
-    @property
-    def is_gray(self) -> bool:
-        """ ## Mono camera check
-        Whether the capturing sensor is monochromatic.
-        """
-        return self._default_shape[2] == 1
-
-    # Main methods
-
-    def read(self, frame_index: int = None) -> Union[np.ndarray, None]:
-        """ ## Read frame
-        Read <frame_index>-th frame.
-
-        :param frame_index: index of the frame to be read.
-        """
-        if frame_index is not None:
-            self.cursor = frame_index
-        ret, frame = super(Capture, self).read()
-        return frame if ret else None
+    def __init__(self, *args, **kwargs) -> None:
+        super(Reader, self).__init__(*args, **kwargs)
 
 
-@unique
-class Key(Enum):
-    """ # Keyboard inputs
-    List of keyboard inputs accepted by the player. Keys that are not inserted here will
-    trigger a logging.ERROR, because the process won't be able to parse the raw value into
-    a Key, and thus into a command.
+class Writer(vidsz.Writer):
+    """ # Video Writer
+    This class is a wrapper to vidsz.opencv.Writer class.
     """
-    NOINPUT = -1
-    ESC = 27
-    SPACEBAR = 32
-    Q = ord('q')
-    S = ord('s')
+
+    def __init__(self, *args, **kwargs) -> None:
+        super(Writer, self).__init__(*args, **kwargs)
 
 
 class Player:
-    """ # OpenCV-based simple video player
+    """ # Video Player
     This tool is based on opencv backend and allows to:
     - read video streams/files;
     - process video frame-by-frame;
-    - display annotations on top of frames;
+    - display annotations on top of frames; 
     - write video output;
     - (TODO) log to console or to file.
     """
 
     def __init__(self,
-                 capture: Capture,
+                 reader: _IReader,
                  algorithm: IAlgorithm = None,
-                 writer: cv.VideoWriter = None,
+                 writer: _IWriter = None,
                  display: bool = False,
                  log: bool = True,
                  no_wait: bool = True) -> None:
@@ -247,17 +75,15 @@ class Player:
             logging.debug("continuing with proper configuration.")
 
         # Input
-        self.cap = capture
+        self.cap = reader
 
         # Processing
         self.proc = algorithm
 
         # Output
-        # NOTE consider initializing cv.VideoWriter directly inside here, instead of passing an instance.
-        # Instantiating here requires knowing frame shape and fps. Condider replicating input ones.
         self.out = writer
         self.display = display
-        # self.logs = log
+        # TODO self.logs = log
 
         # Playback state
         self.is_paused = False
@@ -274,7 +100,7 @@ class Player:
         """
         logging.info("starting main loop.")
 
-        while self.cap.isOpened() and self.cap.has_next:
+        while self.cap.is_open():
 
             # Get cycle start time, to match processing frequency to input FPS.
             if not self.no_wait:
@@ -287,7 +113,7 @@ class Player:
                 if self.proc is not None:
                     tick_start_proc = cv.getTickCount()
                     res = self.proc.run(frame, *self.proc.run_args, **self.proc.run_kwargs)
-                    time_proc = (cv.getTickCount() -
+                    time_proc_ms = 1e3 * (cv.getTickCount() -
                                     tick_start_proc) / cv.getTickFrequency()
 
                 # Visualization
@@ -298,7 +124,7 @@ class Player:
                     # Player annotations
                     cv.putText(
                         frame,
-                        f"Processing FPS: {int(1 / time_proc)}",
+                        f"Processing time [ms]: {time_proc_ms:.3f}",
                         (10, 20),
                         cv.FONT_HERSHEY_SIMPLEX,
                         0.5,
@@ -358,9 +184,7 @@ class Player:
                     self.is_paused = True
 
             elif k is Key.S:  # save current frame
-                filename = Path(f"./output/{self.cap.filename}_{self.cap.cursor}.png") \
-                    if self.cap.source is Source.FILE \
-                    else Path(f"./output/{str(datetime.now())}.png")
+                filename = Path(f"./output/{self.cap.name}_{self.cap.frame_count}.png")
                 filename.parent.mkdir(parents=True, exist_ok=True)
                 cv.imwrite(str(filename), self.frame)
 
@@ -372,6 +196,6 @@ class Player:
         Release input stream, output and display.
         """
         self.cap.release()
-        if self.out is not None and self.out.isOpened():
+        if self.out is not None:
             self.out.release()
         cv.destroyAllWindows()
