@@ -15,25 +15,48 @@ parser.add_io_group()
 args = parser.parse_args()
 
 
-# Processing is set as a class extending procs.Algorithm interface.
+# %% Option 1
+# Processing is set as a class extending procs.IAlgorithm interface.
 class CannyEdge(procs.IAlgorithm):
 
-    def __init__(self, run_args, run_kwargs) -> None:
+    def __init__(self,
+                 run_args: list,
+                 run_kwargs: dict = {},
+                 plot_args: list = [],
+                 plot_kwargs: dict = {}) -> None:
+        """Instantiate CannyEdge detector parameters."""
         self.run_args = run_args
         self.run_kwargs = run_kwargs
+        self.plot_args = plot_args
+        self.plot_kwargs = plot_kwargs
 
-    def run(self, frame: np.ndarray) -> bool:
-        self.edges = cv.Canny(frame, *self.run_args, **self.run_kwargs)
-        return True
+    def run(self, frame: np.ndarray, th1, th2) -> bool:
+        """Run Canny edge detection."""
+        self.edges = cv.Canny(frame, th1, th2)
+        return self.edges is not None
 
-    def plot(self, frame: np.ndarray) -> np.ndarray:
+    def plot(self, frame: np.ndarray, *args, **kwargs) -> np.ndarray:
+        """Plot results."""
         return self.edges
 
 
+# Algorithm instantiation.
 algorithm = CannyEdge(
-    run_args=[50, 10],
-    run_kwargs={}
+    run_args=[100, 50]
 )
+
+
+# %% Option 2
+# Processing class is instantiated directly from opencv function.
+# It is still necessary to specify how to plot the results:
+# `plot_func` is being passed the argument `result`, which is te output of `run_func`
+def annotate(frame, result=None):
+    return result
+
+
+# %% Loop over 
+# Algorith instantiation.
+algorithm = procs.AlgorithmFromFuncs(run_func=cv.Canny, run_args=[100, 50], plot_func=annotate)
 
 # Create Player.
 capture = video.Capture(args.source, args.input)

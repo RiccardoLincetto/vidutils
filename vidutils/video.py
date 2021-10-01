@@ -286,7 +286,7 @@ class Player:
                 # Processing
                 if self.proc is not None:
                     tick_start_proc = cv.getTickCount()
-                    res = self.proc.run(frame)
+                    res = self.proc.run(frame, *self.proc.run_args, **self.proc.run_kwargs)
                     time_proc = (cv.getTickCount() -
                                     tick_start_proc) / cv.getTickFrequency()
 
@@ -294,7 +294,7 @@ class Player:
                 if self.display or self.out is not None:
                     # Algorithm annotations
                     if res:
-                        frame = self.proc.plot(frame)
+                        frame = self.proc.plot(frame, *self.proc.plot_args, **self.proc.plot_kwargs)
                     # Player annotations
                     cv.putText(
                         frame,
