@@ -20,7 +20,7 @@ class ArgumentParser(argparse.ArgumentParser):
         # Input
         self.input = self.add_argument_group(
             'input arguments',
-            'mutually exclusive group, used to select the type and specify the video source.')
+            'select the input video.')
         self.input.add_argument('-i', '--input', type=str,
                                 help='video path or camera index (opencv convention)')
         # Output
