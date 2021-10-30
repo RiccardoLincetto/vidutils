@@ -2,7 +2,6 @@
 # Here are all classes related to video processing.
 
 import abc
-import time
 from typing import Callable
 
 import numpy as np
