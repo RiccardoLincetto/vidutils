@@ -12,6 +12,7 @@ class TestArgumentParser(unittest.TestCase):
         cls.parser = script.ArgumentParser()
         cls.parser.add_io_group()
         cls.parser.add_camera_group()
+        cls.parser.add_logging_group()
 
     def test_file_input(self):
         sys.argv[1:] = ["--input=video.mp4"]
@@ -30,3 +31,14 @@ class TestArgumentParser(unittest.TestCase):
         args = self.parser.parse_args()
         self.assertIsInstance(args.input, str)
         self.assertEqual(args.input, "rtp://ip:port")
+
+    def test_log_level_debug(self):
+        sys.argv[1:] = ["--log-level=debug"]
+        args = self.parser.parse_args()
+        self.assertIsInstance(args.log_level, int)
+        self.assertEqual(args.log_level, 10)
+
+    def test_log_level_invalid(self):
+        sys.argv[1:] = ["--log-level=invalid"]
+        with self.assertRaises(AttributeError):
+            args = self.parser.parse_args()
