@@ -2,9 +2,12 @@
 # Here are all classes related to video processing.
 
 import abc
+import time
 from typing import Callable
 
 import numpy as np
+
+from .utils import logged, timed
 
 
 class IAlgorithm(metaclass=abc.ABCMeta):
@@ -98,6 +101,8 @@ class AlgorithmFromFuncs(IAlgorithm):
         self.plot_args = plot_args
         self.plot_kwargs = plot_kwargs
 
+    @logged
+    @timed
     def run(self, frame: np.ndarray, *args, **kwargs) -> bool:
         """ ## Run algorithm
         Execute the algorithm on a single frame.
@@ -107,6 +112,8 @@ class AlgorithmFromFuncs(IAlgorithm):
         self.plot_kwargs['result'] = self.run_func(frame, *self.run_args, **self.run_kwargs)
         return self.plot_kwargs['result'] is not None
 
+    @logged
+    @timed
     def plot(self, frame: np.ndarray, *args, **kwargs) -> np.ndarray:
         """ ## Plot results
         Annotate video output with processing results.
