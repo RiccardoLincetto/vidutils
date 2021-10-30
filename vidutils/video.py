@@ -8,7 +8,7 @@ from time import sleep
 
 import cv2 as cv
 import vidsz.opencv as vidsz
-from vidsz.interfaces import _IReader, _IWriter
+from vidsz.interfaces import IReader, IWriter
 
 from .procs import IAlgorithm
 from .script import Key
@@ -43,9 +43,9 @@ class Player:
     """
 
     def __init__(self,
-                 reader: _IReader,
+                 reader: IReader,
                  algorithm: IAlgorithm = None,
-                 writer: _IWriter = None,
+                 writer: IWriter = None,
                  display: bool = False,
                  log: bool = True,
                  no_wait: bool = True) -> None:
