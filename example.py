@@ -1,5 +1,7 @@
 #!./venv/bin/python
 
+import logging
+
 import cv2 as cv
 import numpy as np
 
@@ -10,8 +12,16 @@ from vidutils import video
 # Input requires to be passed from CLI.
 parser = script.ArgumentParser()
 parser.add_io_group()
+parser.add_logging_group()
 args = parser.parse_args()
 
+# Set logging.
+# TODO consider moving to script module (maybe inside argument parsing?)
+logging.basicConfig(
+    level=args.log_level,
+    format='[%(asctime)s]:%(module)s:%(levelname)s: %(message)s',
+    filename=args.log_file
+)
 
 # %% Option 1
 # Processing is set as a class extending procs.IAlgorithm interface.
