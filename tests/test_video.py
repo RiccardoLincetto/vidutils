@@ -87,4 +87,4 @@ class TestPlayer(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        cls.close()
+        cls.player.close()
