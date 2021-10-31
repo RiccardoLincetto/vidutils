@@ -11,7 +11,8 @@ class ArgumentParser(argparse.ArgumentParser):
     argparse.ArgumentParser with extended capabilities for videos.
 
     This class adds by default some arguments related to the following groups:
-    - input/output: input file selection, output file selection, display and logging;
+    - input/output: input file selection, output file selection, display;
+    - logging: control over logging options, like level and destination;
     - camera specs: camera physical parameters, like frame size and frames per second;
     """
 
@@ -20,7 +21,7 @@ class ArgumentParser(argparse.ArgumentParser):
         # Input
         self.input = self.add_argument_group(
             'input arguments',
-            'mutually exclusive group, used to select the type and specify the video source.')
+            'select the input video.')
         self.input.add_argument('-i', '--input', type=str,
                                 help='video path or camera index (opencv convention)')
         # Output
@@ -29,10 +30,19 @@ class ArgumentParser(argparse.ArgumentParser):
             'specify which type of output is desired.')
         self.output.add_argument('-d', '--display', action='store_true', default=False,
                                  help='enable real-time window display')
-        self.output.add_argument('-s', '--save', type=str,
-                                 help='save video to output file')
-        self.output.add_argument('-l', '--log', type=str,
-                                 help='log result to file')
+        self.output.add_argument('-o', '--output', type=str,
+                                 help='save output video to file')
+
+    def add_logging_group(self) -> None:
+        """Configure logging options."""
+        self.log = self.add_argument_group(
+            'logging options',
+            'configure logging level and destination.'
+        )
+        self.log.add_argument('-s', '--log-level', '--severity', type=str, default='warning',
+                              help='set logging level among {debug, info, warning, error, critical}')
+        self.log.add_argument('-l', '--log-file', type=str, default=None,
+                              help='set logging destination to file. Default (None) is console.')
 
     def add_camera_group(self) -> None:
         """Enable arguments group for camera specifications."""
@@ -50,12 +60,21 @@ class ArgumentParser(argparse.ArgumentParser):
     def parse_args(self, *args, **kwargs):
         """Parse arguments and fix input."""
         arguments = super(ArgumentParser, self).parse_args(*args, **kwargs)
-        # Use single variable to distinguish between source types
+
+        # Get input source
+        # If input string is convertible to integer, convert it. Otherwise leave it to a string.
         try:
-            arguments.input = int(arguments.input)
-            logging.debug("parsed input as integer")
+            arguments.input = int(arguments.input) if arguments.input is not None else None
         except ValueError:
-            logging.debug("parsed input as str")
+            pass
+
+        # Get log-level
+        # This piece of code are only for logging level parsing, but they do NOT set the logging configuration.
+        # Logging configuration is to be set in the module calling this function.
+        # This makes it easier to separate logging to console from logging to filename,
+        # in different usages (e.g. testing vs deploying)
+        arguments.log_level = getattr(logging, arguments.log_level.upper())
+
         return arguments
 
 

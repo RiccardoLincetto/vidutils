@@ -8,7 +8,7 @@ from time import sleep
 
 import cv2 as cv
 import vidsz.opencv as vidsz
-from vidsz.interfaces import _IReader, _IWriter
+from vidsz.interfaces import IReader, IWriter
 
 from .procs import IAlgorithm
 from .script import Key
@@ -43,9 +43,9 @@ class Player:
     """
 
     def __init__(self,
-                 reader: _IReader,
+                 reader: IReader,
                  algorithm: IAlgorithm = None,
-                 writer: _IWriter = None,
+                 writer: IWriter = None,
                  display: bool = False,
                  log: bool = True,
                  no_wait: bool = True) -> None:
@@ -111,20 +111,17 @@ class Player:
 
                 # Processing
                 if self.proc is not None:
-                    tick_start_proc = cv.getTickCount()
-                    res = self.proc.run(frame, *self.proc.run_args, **self.proc.run_kwargs)
-                    time_proc_ms = 1e3 * (cv.getTickCount() -
-                                    tick_start_proc) / cv.getTickFrequency()
+                    res, dt_proc = self.proc.run(frame, *self.proc.run_args, **self.proc.run_kwargs)
 
                 # Visualization
                 if self.display or self.out is not None:
                     # Algorithm annotations
                     if res:
-                        frame = self.proc.plot(frame, *self.proc.plot_args, **self.proc.plot_kwargs)
+                        frame, _ = self.proc.plot(frame, *self.proc.plot_args, **self.proc.plot_kwargs)
                     # Player annotations
                     cv.putText(
                         frame,
-                        f"Processing time [ms]: {time_proc_ms:.3f}",
+                        f"Processing time [ms]: {dt_proc * 1e3:.3f}",
                         (10, 20),
                         cv.FONT_HERSHEY_SIMPLEX,
                         0.5,
