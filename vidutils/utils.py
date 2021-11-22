@@ -12,9 +12,9 @@ def timed(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        t0 = time.time()
+        t0 = time.perf_counter()
         res = func(*args, **kwargs)
-        t1 = time.time()
+        t1 = time.perf_counter()
         return res, t1 - t0
 
     return wrapper
