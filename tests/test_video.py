@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock
 
-from vidutils import video
+from src.vidutils import video
 
 
 class TestReader(unittest.TestCase):

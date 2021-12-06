@@ -3,7 +3,7 @@ import os
 import unittest
 from time import sleep
 
-from vidutils import utils
+from src.vidutils import utils
 
 
 class TestTimerWrapper(unittest.TestCase):

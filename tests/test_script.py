@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-from vidutils import script
+from src.vidutils import script
 
 
 class TestArgumentParser(unittest.TestCase):
