@@ -5,9 +5,9 @@ import logging
 import cv2 as cv
 import numpy as np
 
-from vidutils import procs
-from vidutils import script
-from vidutils import video
+from src.vidutils import procs
+from src.vidutils import script
+from src.vidutils import video
 
 # Input requires to be passed from CLI.
 parser = script.ArgumentParser()
