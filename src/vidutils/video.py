@@ -7,49 +7,24 @@ from pathlib import Path
 from time import sleep
 
 import cv2 as cv
-import vidsz.opencv as vidsz
-from vidsz.interfaces import _IReader, _IWriter
+import vidsz.opencv
 
 from .procs import IAlgorithm
 from .script import Key
 
 
-class Reader(vidsz.Reader):
+class Reader(vidsz.opencv.Reader):
     """ # Video Reader
     This class is a wrapper to vidsz.opencv.Reader class.
     """
-
-    def __init__(self, *args, **kwargs) -> None:
-        super(Reader, self).__init__(*args, **kwargs)
-
-    def release(self) -> None:
-        """Release Resources."""
-        if self._video_stream is not None:
-            self._video_stream.release()
-    
-    def __del__(self) -> None:
-         """Release Resources."""
-         self.release()
-         self._video_stream = None
+    pass
 
 
-class Writer(vidsz.Writer):
+class Writer(vidsz.opencv.Writer):
     """ # Video Writer
     This class is a wrapper to vidsz.opencv.Writer class.
     """
-
-    def __init__(self, *args, **kwargs) -> None:
-        super(Writer, self).__init__(*args, **kwargs)
-
-    def release(self) -> None:
-        """Release Resources."""
-        if self._video_writer is not None:
-            self._video_writer.release()
-
-    def __del__(self) -> None:
-        """Release Resources."""
-        self.release()
-        self._video_writer = None
+    pass
 
 
 class Player:
@@ -63,9 +38,9 @@ class Player:
     """
 
     def __init__(self,
-                 reader: _IReader,
+                 reader: Reader,
                  algorithm: IAlgorithm = None,
-                 writer: _IWriter = None,
+                 writer: Writer = None,
                  display: bool = False,
                  log: bool = True,
                  no_wait: bool = True) -> None:
