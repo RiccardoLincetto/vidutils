@@ -32,4 +32,4 @@ jobs:
           poetry run coverage report -m
       # Run mypy
       - run: |
-          poetry run mypy ml_utils
+          poetry run mypy src
