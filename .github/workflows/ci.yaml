@@ -26,10 +26,10 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install
+      - name: Run type checking
+        run: |
+          poetry run mypy src
       - name: Run tests
         run: |
           poetry run coverage run -m unittest discover -v -s tests -p "test_*.py"
           poetry run coverage report -m
-      - name: Run type checking
-        run: |
-          poetry run mypy src
