@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "vidutils"
+version = "0.1.0"
+description = "Video processing tools for prototyping in Python."
+authors = ["Riccardo Lincetto <37301469+RiccardoLincetto@users.noreply.github.com>"]
+license = "bsd-3-clause"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+opencv-python-headless = "^4.7.0.72"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+coverage = {version = "^7.2.2", extras = ["toml"]}
+flake8 = "^6.0.0"
+isort = "^5.12.0"
+mypy = "^1.1.1"
+pre-commit = "^3.1.1"
+
+[tool.black]
+line-length = 120
+target-version = ['py39', 'py310', 'py311']
+
+[tool.coverage.run]
+source = ["src/vidutils"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+
+[tool.mypy]
+strict = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
