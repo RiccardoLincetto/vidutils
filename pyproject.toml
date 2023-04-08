@@ -17,6 +17,7 @@ black = "^23.3.0"
 
 [tool.poetry.group.ci.dependencies]
 mypy = "^1.2.0"
+coverage = "^7.2.3"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -43,6 +44,18 @@ line-length = 120
 
 [tool.black]
 line-length = 120
+
+[tool.coverage.run]
+source = ["vidutils"]
+branch = true
+disable_warnings = [
+    'no-data-collected',
+    'no-module-imported',
+]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
 
 [build-system]
 requires = ["poetry-core"]
