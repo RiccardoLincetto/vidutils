@@ -13,6 +13,7 @@ python = "^3.11"
 pre-commit = "^3.2.2"
 commitizen = "^2.42.1"
 ruff = "^0.0.261"
+black = "^23.3.0"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -35,6 +36,9 @@ update_changelog_on_bump = true
 major_version_zero = true
 
 [tool.ruff]
+line-length = 120
+
+[tool.black]
 line-length = 120
 
 [build-system]
