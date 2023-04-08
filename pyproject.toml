@@ -15,6 +15,9 @@ commitizen = "^2.42.1"
 ruff = "^0.0.261"
 black = "^23.3.0"
 
+[tool.poetry.group.ci.dependencies]
+mypy = "^1.2.0"
+
 [tool.commitizen]
 name = "cz_conventional_commits"
 version = "0.1.0"
