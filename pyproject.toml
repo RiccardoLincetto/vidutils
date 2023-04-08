@@ -12,6 +12,7 @@ python = "^3.11"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.2.2"
 commitizen = "^2.42.1"
+ruff = "^0.0.261"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -32,6 +33,9 @@ style = [
 tag_format = "v$major.$minor.$patch$prerelease"
 update_changelog_on_bump = true
 major_version_zero = true
+
+[tool.ruff]
+line-length = 120
 
 [build-system]
 requires = ["poetry-core"]
