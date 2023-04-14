@@ -24,7 +24,8 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: venv
-          path: .venv/
+          path: $(poetry config virtualenvs.path)
+          if-no-files-found: error
 
   type-checking:
     runs-on: ubuntu-latest
