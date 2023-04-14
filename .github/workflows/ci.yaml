@@ -42,4 +42,4 @@ jobs:
       - name: Install dependencies
         run: poetry install --with=ci
       - name: Check license
-        run: liccheck
+        run: poetry run liccheck
