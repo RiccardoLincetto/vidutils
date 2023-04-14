@@ -19,12 +19,14 @@ jobs:
           python-version: "3.11"
       - name: Install poetry
         run: python3 -m pip install poetry==1.4.2
+      - name: Configure Poetry
+        run: poetry config virtualenvs.in-project true
       - name: Install dependencies
         run: poetry install --with=ci
       - uses: actions/upload-artifact@v3
         with:
           name: venv
-          path: $(poetry config virtualenvs.path)
+          path: .venv/
           if-no-files-found: error
 
   type-checking:
