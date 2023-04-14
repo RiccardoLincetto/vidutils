@@ -16,6 +16,7 @@ ruff = "^0.0.261"
 black = "^23.3.0"
 
 [tool.poetry.group.ci.dependencies]
+liccheck = "^0.8.3"
 mypy = "^1.2.0"
 coverage = "^7.2.3"
 
@@ -56,6 +57,29 @@ disable_warnings = [
 [tool.coverage.report]
 fail_under = 100
 show_missing = true
+
+[tool.liccheck]
+authorized_licenses = [
+    "bsd",
+    "new bsd",
+    "bsd license",
+    "new bsd license",
+    "simplified bsd",
+    "apache",
+    "apache 2.0",
+    "apache software license",
+    "gnu lgpl",
+    "lgpl with exceptions or zpl",
+    "isc license",
+    "isc license (iscl)",
+    "mit",
+    "mit license",
+    "python software foundation license",
+    "zpl 2.1",
+]
+unauthorized_licenses = [
+    "gpl v3",
+]
 
 [build-system]
 requires = ["poetry-core"]

@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  tests:
+  build:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -21,9 +21,53 @@ jobs:
         run: python3 -m pip install poetry==1.4.2
       - name: Install dependencies
         run: poetry install --with=ci
+      - uses: actions/upload-artifact@v3
+        with:
+          name: venv
+          path: .venv/
+
+  type-checking:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+    needs:
+      - build
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: venv
       - name: Run type checking
         run: poetry run mypy .
+
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+    needs:
+      - build
+      - type-checking
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: venv
       - name: Run tests
         run: |
           poetry run coverage run -m unittest discover -v -s tests -p "test_*.py"
           poetry run coverage report -m
+
+  license:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    needs:
+      - build
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: venv
+      - name: Check license
+        run: liccheck
