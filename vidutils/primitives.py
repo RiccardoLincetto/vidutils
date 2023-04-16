@@ -12,18 +12,19 @@ class Frame(np.ndarray):
     - An RGB frame can be represented with dimensions: `(H, W, 3)`.
     """
 
-    def __new__(cls, input_array: ArrayLike) -> np.ndarray:  # TODO check output type is valid
+    def __new__(cls, input_array: ArrayLike) -> np.ndarray:  # type: ignore
         obj = np.asarray(input_array).view(cls)
 
+        # Return RGB frames as is
+        if obj.ndim == 3 and obj.shape[2] in (3, 1):
+            return obj
+
         # Turn grayscale frames into 3D arrays by adding a trailing dimension
-        if obj.ndim == 2:
-            obj = obj[:, :, np.newaxis]
+        elif obj.ndim == 2:
+            return obj[:, :, np.newaxis]
 
-        # Check if the frame is valid
-        elif obj.ndim != 3 or obj.shape[2] not in (1, 3):
-            raise ValueError(f"Invalid shape for Frame: {obj.shape}")
-
-        return obj
+        # Raise an error for invalid shapes
+        raise ValueError(f"Invalid shape for Frame: {obj.shape}")
 
     @property
     def height(self) -> int:
