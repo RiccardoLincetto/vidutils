@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 from numpy.typing import ArrayLike
 
@@ -37,3 +38,15 @@ class Frame(np.ndarray):
     @property
     def channels(self) -> int:
         return self.shape[2]
+
+
+class Reader(cv2.VideoCapture):
+    """Video reader."""
+
+    pass
+
+
+class Writer(cv2.VideoWriter):
+    """Video writer."""
+
+    pass
