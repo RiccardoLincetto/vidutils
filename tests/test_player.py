@@ -41,6 +41,14 @@ class TestPlayerWithoutWriter:
         player.close()
         assert mock_reader.release.call_count == 1
 
+    @pytest.mark.parametrize("iterations", [0, 1, 2])
+    def test_play(self, mock_reader, iterations):
+        player = Player(mock_reader)
+        # Define how many times the mock_reader.isOpened method should return True before a False
+        mock_reader.isOpened.side_effect = [True] * iterations + [False]
+        player.play()
+        assert mock_reader.read.call_count == iterations
+
 
 class TestPlayerWithWriter:
     def test_init(self, mock_reader, mock_writer):
@@ -60,3 +68,12 @@ class TestPlayerWithWriter:
         player.close()
         assert mock_reader.release.call_count == 1
         assert mock_writer.release.call_count == 1
+
+    @pytest.mark.parametrize("iterations", [0, 1, 2])
+    def test_play(self, mock_reader, mock_writer, iterations):
+        player = Player(mock_reader, mock_writer)
+        # Define how many times the mock_reader.isOpened method should return True before a False
+        mock_reader.isOpened.side_effect = [True] * iterations + [False]
+        player.play()
+        assert mock_reader.read.call_count == iterations
+        assert mock_writer.write.call_count == iterations
