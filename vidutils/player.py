@@ -5,7 +5,7 @@ from vidutils.primitives import Frame, Reader, Writer
 
 
 class Player:
-    def __init__(self, reader: Reader, algorithm: Callable[[Frame], Frame], writer: Writer = None) -> None:
+    def __init__(self, reader: Reader, algorithm: Callable[[Frame], Frame], writer: Writer) -> None:
         self.reader: Reader = reader
         self.algorithm: Callable = algorithm
         self.writer: Writer | None = writer
@@ -18,13 +18,11 @@ class Player:
             self.close()
         else:
             frame: Frame = self.algorithm(frame)
-            if self.writer is not None:
-                self.writer.write(frame)
+            self.writer.write(frame)
 
     def close(self) -> None:
         self.reader.release()
-        if self.writer is not None:
-            self.writer.release()
+        self.writer.release()
 
     def play(self) -> None:
         while self.reader.isOpened():

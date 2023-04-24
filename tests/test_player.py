@@ -32,36 +32,7 @@ def mock_algorithm() -> MagicMock:
     return mock_algorithm
 
 
-class TestPlayerWithoutWriter:
-    def test_init(self, mock_reader, mock_algorithm):
-        player = Player(mock_reader, mock_algorithm)
-        assert isinstance(player, Player)
-        assert isinstance(player.reader, Reader)
-        assert isinstance(player.algorithm, Callable)
-        assert player.writer is None
-
-    def test_step(self, mock_reader, mock_algorithm):
-        player = Player(mock_reader, mock_algorithm)
-        player._step()
-        assert mock_reader.read.call_count == 1
-        assert mock_algorithm.call_count == 1
-
-    def test_close(self, mock_reader, mock_algorithm):
-        player = Player(mock_reader, mock_algorithm)
-        player.close()
-        assert mock_reader.release.call_count == 1
-
-    @pytest.mark.parametrize("iterations", [0, 1, 2])
-    def test_play(self, mock_reader, mock_algorithm, iterations):
-        player = Player(mock_reader, mock_algorithm)
-        # Define how many times the mock_reader.isOpened method should return True before a False
-        mock_reader.isOpened.side_effect = [True] * iterations + [False]
-        player.play()
-        assert mock_reader.read.call_count == iterations
-        assert mock_algorithm.call_count == iterations
-
-
-class TestPlayerWithWriter:
+class TestPlayer:
     def test_init(self, mock_reader, mock_algorithm, mock_writer):
         player = Player(mock_reader, mock_algorithm, mock_writer)
         assert isinstance(player, Player)
