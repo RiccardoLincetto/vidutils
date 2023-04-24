@@ -43,7 +43,16 @@ class Frame(np.ndarray):
 class Reader(cv2.VideoCapture):
     """Video reader."""
 
-    pass
+    def read(self) -> Frame:
+        """Read a single frame from the video.
+
+        Returns:
+            Frame: A single frame from the video.
+        """
+        ok, frame = super().read()
+        if not ok:
+            raise EOFError("End of file reached")
+        return Frame(frame)
 
 
 class Writer(cv2.VideoWriter):

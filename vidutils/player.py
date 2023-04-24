@@ -1,3 +1,4 @@
+import logging
 from typing import Callable
 
 from vidutils.primitives import Frame, Reader, Writer
@@ -10,10 +11,15 @@ class Player:
         self.writer: Writer | None = writer
 
     def _step(self) -> None:
-        frame = Frame(self.reader.read())
-        frame: Frame = self.algorithm(frame)
-        if self.writer is not None:
-            self.writer.write(frame)
+        try:
+            frame: Frame = self.reader.read()
+        except EOFError:
+            logging.info("End of file reached")
+            self.close()
+        else:
+            frame: Frame = self.algorithm(frame)
+            if self.writer is not None:
+                self.writer.write(frame)
 
     def close(self) -> None:
         self.reader.release()
