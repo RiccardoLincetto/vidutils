@@ -11,7 +11,7 @@ class Player:
 
     def _step(self) -> None:
         frame = Frame(self.reader.read())
-        frame = self.algorithm(frame)
+        frame: Frame = self.algorithm(frame)
         if self.writer is not None:
             self.writer.write(frame)
 
