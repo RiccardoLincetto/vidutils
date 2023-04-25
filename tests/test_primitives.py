@@ -1,9 +1,8 @@
-import cv2
 import numpy as np
 import pytest
 
 from tests import settings
-from vidutils.primitives import Frame, Reader
+from vidutils.primitives import Frame
 
 
 class TestFrameCreation:
@@ -35,10 +34,3 @@ class TestFrameProperties:
     def test_channels(self, shape: tuple[int, ...]):
         frame = Frame(np.zeros(shape))
         assert frame.channels == (shape[2] if len(shape) == 3 else 1)
-
-
-class TestReader:
-    def test_init(self):
-        reader = Reader("")
-        assert isinstance(reader, Reader)
-        assert isinstance(reader, cv2.VideoCapture)
