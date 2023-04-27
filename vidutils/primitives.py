@@ -45,15 +45,15 @@ class Reader(cv2.VideoCapture):
 
     @property
     def height(self) -> int:
-        return int(self.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        return int(self.get(cv2.CAP_PROP_FRAME_HEIGHT))  # pragma: no cover
 
     @property
     def width(self) -> int:
-        return int(self.get(cv2.CAP_PROP_FRAME_WIDTH))
+        return int(self.get(cv2.CAP_PROP_FRAME_WIDTH))  # pragma: no cover
 
     @property
     def fps(self) -> int:
-        return int(self.get(cv2.CAP_PROP_FPS))
+        return int(self.get(cv2.CAP_PROP_FPS))  # pragma: no cover
 
 
 class Writer(cv2.VideoWriter):

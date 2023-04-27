@@ -62,3 +62,18 @@ class TestPlayer:
         assert mock_reader.read.call_count == iterations
         assert mock_writer.write.call_count == iterations
         assert mock_algorithm.call_count == iterations
+        player.close()
+        assert mock_reader.release.call_count == 1
+        assert mock_writer.release.call_count == 1
+
+    def test_play_no_frames(self, mock_reader, mock_algorithm, mock_writer):
+        player = Player(mock_reader, mock_algorithm, mock_writer)
+        mock_reader.isOpened.side_effect = (True, False)
+        mock_reader.read.return_value = (False, None)
+        player.play()
+        assert mock_reader.read.call_count == 1
+        assert mock_writer.write.call_count == 0
+        assert mock_algorithm.call_count == 0
+        # No need to manually close, as the player will close itself when it reaches the end of the video
+        assert mock_reader.release.call_count == 1
+        assert mock_writer.release.call_count == 1
