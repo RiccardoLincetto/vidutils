@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import cv2
 import numpy as np
 from numpy.typing import ArrayLike
@@ -59,4 +61,16 @@ class Reader(cv2.VideoCapture):
 class Writer(cv2.VideoWriter):
     """Video writer."""
 
-    pass
+    _EXT_TO_FOURCC = {
+        ".avi": "DIVX",
+        ".mkv": "X264",
+        ".mp4": "mp4v",
+    }
+
+    def __init__(self, filename: Path | str, reader: cv2.VideoCapture) -> None:
+        super().__init__(
+            str(filename),
+            cv2.VideoWriter_fourcc(*self._EXT_TO_FOURCC[Path(filename).suffix]),
+            int(reader.get(cv2.CAP_PROP_FPS)),
+            (int(reader.get(cv2.CAP_PROP_FRAME_WIDTH)), int(reader.get(cv2.CAP_PROP_FRAME_HEIGHT))),
+        )
