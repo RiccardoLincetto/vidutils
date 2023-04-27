@@ -8,7 +8,7 @@ class Player:
     def __init__(self, reader: Reader, algorithm: Callable[[Frame], Frame], writer: Writer) -> None:
         self.reader: Reader = reader
         self.algorithm: Callable = algorithm
-        self.writer: Writer | None = writer
+        self.writer: Writer = writer
 
     def _step(self) -> None:
         ok, frame = self.reader.read()
