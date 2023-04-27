@@ -7,18 +7,21 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-
+numpy = "^1.24.2"
+opencv-python-headless = "^4.7.0.72"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.2.2"
 commitizen = "^2.42.1"
 ruff = "^0.0.261"
 black = "^23.3.0"
+ipykernel = "^6.22.0"
 
 [tool.poetry.group.ci.dependencies]
 liccheck = "^0.8.3"
 mypy = "^1.2.0"
 coverage = "^7.2.3"
+pytest = "^7.3.1"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -46,6 +49,9 @@ line-length = 120
 [tool.black]
 line-length = 120
 
+[tool.mypy]
+ignore_missing_imports = true
+
 [tool.coverage.run]
 source = ["vidutils"]
 branch = true
@@ -67,6 +73,7 @@ authorized_licenses = [
     "simplified bsd",
     "apache",
     "apache 2.0",
+    "apache software",
     "apache software license",
     "gnu lgpl",
     "lgpl with exceptions or zpl",
@@ -80,6 +87,9 @@ authorized_licenses = [
 unauthorized_licenses = [
     "gpl v3",
 ]
+
+[tool.pytest]
+# Accepted frame shapes
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,0 +1,16 @@
+{
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "cSpell.words": [
+        "asarray",
+        "DIVX",
+        "FOURCC",
+        "ndim",
+        "newaxis",
+        "vidutils"
+    ],
+    "python.analysis.typeCheckingMode": "off"
+}
