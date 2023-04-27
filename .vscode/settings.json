@@ -6,6 +6,8 @@
     "python.testing.unittestEnabled": false,
     "cSpell.words": [
         "asarray",
+        "DIVX",
+        "FOURCC",
         "ndim",
         "newaxis",
         "vidutils"
