@@ -49,6 +49,9 @@ line-length = 120
 [tool.black]
 line-length = 120
 
+[tool.mypy]
+ignore_missing_imports = true
+
 [tool.coverage.run]
 source = ["vidutils"]
 branch = true
