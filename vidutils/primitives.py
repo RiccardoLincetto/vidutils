@@ -43,6 +43,18 @@ class Frame(np.ndarray):
 class Reader(cv2.VideoCapture):
     """Video reader."""
 
+    @property
+    def height(self) -> int:
+        return int(self.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    @property
+    def width(self) -> int:
+        return int(self.get(cv2.CAP_PROP_FRAME_WIDTH))
+
+    @property
+    def fps(self) -> int:
+        return int(self.get(cv2.CAP_PROP_FPS))
+
     def read(self) -> Frame:
         """Read a single frame from the video.
 
