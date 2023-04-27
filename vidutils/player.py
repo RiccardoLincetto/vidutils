@@ -23,6 +23,7 @@ class Player:
     def close(self) -> None:
         self.reader.release()
         self.writer.release()
+        logging.warning("Video player closed")
 
     def play(self) -> None:
         while self.reader.isOpened():
