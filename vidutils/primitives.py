@@ -71,6 +71,6 @@ class Writer(cv2.VideoWriter):
         super().__init__(
             str(filename),
             cv2.VideoWriter_fourcc(*self._EXT_TO_FOURCC[Path(filename).suffix]),
-            reader.get(cv2.CAP_PROP_FPS),
-            (reader.get(cv2.CAP_PROP_FRAME_WIDTH), reader.get(cv2.CAP_PROP_FRAME_HEIGHT)),
+            int(reader.get(cv2.CAP_PROP_FPS)),
+            (int(reader.get(cv2.CAP_PROP_FRAME_WIDTH)), int(reader.get(cv2.CAP_PROP_FRAME_HEIGHT))),
         )
