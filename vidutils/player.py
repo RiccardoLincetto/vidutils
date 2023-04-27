@@ -13,9 +13,8 @@ class Player:
     def _step(self) -> None:
         ok, frame = self.reader.read()
         if ok:
-            frame = Frame(frame)
-            frame: Frame = self.algorithm(frame)
-            self.writer.write(frame)
+            frame_out: Frame = self.algorithm(Frame(frame))
+            self.writer.write(frame_out)
         else:
             logging.info("End of file reached")
             self.close()
