@@ -12,7 +12,7 @@ from vidutils.player import Player
 def mock_reader() -> MagicMock:
     mock_reader = MagicMock(spec=Reader)
     mock_reader.isOpened.return_value = True
-    mock_reader.read.return_value = Frame(np.random.randint(0, 255, (100, 100, 3)))
+    mock_reader.read.return_value = (True, Frame(np.random.randint(0, 255, (100, 100, 3))))
     mock_reader.release.return_value = None
     return mock_reader
 

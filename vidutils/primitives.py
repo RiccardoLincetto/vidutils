@@ -55,17 +55,6 @@ class Reader(cv2.VideoCapture):
     def fps(self) -> int:
         return int(self.get(cv2.CAP_PROP_FPS))
 
-    def read(self) -> Frame:
-        """Read a single frame from the video.
-
-        Returns:
-            Frame: A single frame from the video.
-        """
-        ok, frame = super().read()
-        if not ok:
-            raise EOFError("End of file reached")
-        return Frame(frame)
-
 
 class Writer(cv2.VideoWriter):
     """Video writer."""

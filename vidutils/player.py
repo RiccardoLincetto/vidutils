@@ -11,14 +11,14 @@ class Player:
         self.writer: Writer | None = writer
 
     def _step(self) -> None:
-        try:
-            frame: Frame = self.reader.read()
-        except EOFError:
-            logging.info("End of file reached")
-            self.close()
-        else:
+        ok, frame = self.reader.read()
+        if ok:
+            frame = Frame(frame)
             frame: Frame = self.algorithm(frame)
             self.writer.write(frame)
+        else:
+            logging.info("End of file reached")
+            self.close()
 
     def close(self) -> None:
         self.reader.release()
