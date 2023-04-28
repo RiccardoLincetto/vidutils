@@ -74,3 +74,5 @@ class Writer(cv2.VideoWriter):
             int(reader.get(cv2.CAP_PROP_FPS)),
             (int(reader.get(cv2.CAP_PROP_FRAME_WIDTH)), int(reader.get(cv2.CAP_PROP_FRAME_HEIGHT))),
         )
+        print("writer:", self.isOpened())
+        print("reader:", reader.isOpened())
