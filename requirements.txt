@@ -27,6 +27,14 @@ numpy==1.24.3 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:ea8282b9bcfe2b5e7d491d0bf7f3e2da29700cec05b49e64d6246923329f2b02 \
     --hash=sha256:ecde0f8adef7dfdec993fd54b0f78183051b6580f606111a6d789cd14c61ea0c \
     --hash=sha256:f21c442fdd2805e91799fbe044a7b999b8571bb0ab0f7850d0cb9641a687092b
+opencv-python-headless==4.7.0.72 ; python_version >= "3.11" and python_version < "4.0" \
+    --hash=sha256:18dac3147863d2f4beef6b06b784ee115799a7842e2883adc4ae750c432613f9 \
+    --hash=sha256:2f8b60bddd325411cf4664e4dbea729ce20f0c2ffeaedc5c6724b544fdf36e8a \
+    --hash=sha256:388015ee96816b71e529fed6153aeb68420b69a80efad7aad5445fd7cd7a154c \
+    --hash=sha256:6e13954f705e640e52962dfb252ee1f0a0af7b33cdbe8dd73f27e7e31172b7a2 \
+    --hash=sha256:eea59caa92b28b197f9d2a2dd8275ca3869718b2a857c8e53203de6ef3f9f4db \
+    --hash=sha256:f448aea686069474e701223a2ed192df95f501a092b5e06e39171b4927564692 \
+    --hash=sha256:f7f421a2099acbfb69db5e571abaf69a90f43846c3832452c19611efc2c6c926
 pydantic==1.10.7 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:01aea3a42c13f2602b7ecbbea484a98169fb568ebd9e247593ea05f01b884b2e \
     --hash=sha256:0cd181f1d0b1d00e2b705f1bf1ac7799a2d938cce3376b8007df62b29be3c2c6 \
